@@ -1,0 +1,2 @@
+## Notes
+discovered that two fields had 'normalized_label':'radish' which wasn't in provided data dictionary. From the background info I saw that the model classifies 32 different crop types and I counted 31 keys in the provided dictionary so I thought about adding 'radish' but hesitated

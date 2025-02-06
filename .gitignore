@@ -1,3 +1,9 @@
+# repo-specific things
+results/
+
+#IDE files
+.vscode/
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -169,6 +175,3 @@ cython_debug/
 
 # PyPI configuration file
 .pypirc
-
-#IDE files
-.vscode/

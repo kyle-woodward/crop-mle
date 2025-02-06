@@ -65,10 +65,18 @@ Depending on the business interpretation of 'good enough' like I mentioned above
 
 In the group of crop types where 0.5 > F1 < 0.75, there are three crop types: Flax, Peas, and Fallow. Flax and Fallow are the weaker 2 of this group assessed by F1, Model Confidence, and Percent Agreement. Peas, like Flax and Fallow, had F1 <= 0.75 but its average confidence and percent agreement were much higher relatively. Looking at the confusion matrix now, it appears that the largest proportion of Pea's False positives and Flax's False positives were actually Flax (603) and Fallow (16) in ground truth respectively. So we have some considerable confusion among these three crop types that would be good argument to re-train with all three of these crop types to reduce interclass confusion among the bottom 3 of our top-performers.
 
-In summary, I recommend to include all fields for these crop types from `u0c` AOI:
+![cm](results/confusion_matrix.png)
 
- Crop Type      | Counts |
-|----------------|--------|
+In summary, I recommend to include all fields for these 20 (of 27 represented) crop types from `u0c` AOI:
+
+| Crop Type   | Counts |
+|-------------|--------|
+| Winter Rye     | 193    |
+| Spring Rye     | 17     |
+| Millet         | 9      |
+| Beans          | 336    |
+| Turnips        | 11     |
+| Trees          | 909    |
 | Ryegrass       | 1885   |
 | Lentils        | 112    |
 | Spring Barley  | 4190   |
@@ -80,13 +88,12 @@ In summary, I recommend to include all fields for these crop types from `u0c` AO
 | Vineyard       | 34     |
 | Soybeans       | 33     |
 | Spring Wheat   | 298    |
-| Total Count    | 8670   |
-| Flax           | 4123   | 
+| Flax           | 4123   |
 | Peas           | 2112   |
-| Fallow         | 11785  |  
-| Total Count    | 18,020 |
+| Fallow         | 11785  |
+| Total Count    | 35,959 |
 
-This represents 11.7% of the total ground truth dataset and incorporates all crop types where performance was deemed sub-optimal according to F1, Agreement %, and Average Confidence.
+This represents 23.3% of the total ground truth dataset and incorporates all crop types where performance was deemed sub-optimal according to F1, Agreement %, and Average Confidence.
 
 
 

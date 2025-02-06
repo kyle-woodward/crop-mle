@@ -1,5 +1,5 @@
 # repo-specific things
-results/
+# results/
 
 #IDE files
 .vscode/

@@ -12,6 +12,18 @@ def standardize_labels(df: gpd.GeoDataFrame,
                         gt_label:str,
                         pred_label:str, 
                         label_map:CropTypeDictionary) -> gpd.GeoDataFrame:
+    """"
+    Create Standardized "gt_label" and "pred_label" columns in the DataFrame 
+        by re-mapping values from non-standardized input gt_label and pred_label columns to standardized values from label_map.
+    Args:
+        df (gpd.GeoDataFrame): DataFrame containing ground truth and predicted label columns.
+        gt_label (str): Column name for ground truth labels.
+        pred_label (str): Column name for predicted labels.
+        label_map (CropTypeDictionary): Dictionary mapping crop types to labels.
+    
+    Returns:
+        gpd.GeoDataFrame: DataFrame with standardized "gt_label" and "pred_label" columns.
+    """
     label_map_dict = asdict(label_map)
     crop_dict = label_map_dict['crop_dict']
     crop_numeric = label_map_dict['crop_numeric']
@@ -21,11 +33,22 @@ def standardize_labels(df: gpd.GeoDataFrame,
     df["pred_label"] = df[pred_label].apply(lambda x: next((k for k, v in crop_numeric.items() if x == v), None))
     return df
 
-# Compute Confusion Matrix & F1 Scores
 def cm_f1(gt_pred_df:gpd.GeoDataFrame,
                     gt_label:str,
                     pred_label:str, 
                     label_map:CropTypeDictionary) -> tuple:
+    """
+    Compute the confusion matrix and F1 scores for the given ground truth and predicted labels.
+
+    Args:
+        gt_pred_df (gpd.GeoDataFrame): DataFrame containing ground truth and predicted labels.
+        gt_label (str): Column name for ground truth labels.
+        pred_label (str): Column name for predicted labels.
+        label_map (CropTypeDictionary): Dictionary mapping crop types to labels.
+
+    Returns:
+        tuple: Confusion matrix (np.ndarray) and F1 scores DataFrame (pd.DataFrame).
+    """
     label_map_dict = asdict(label_map)
     crop_dict = label_map_dict['crop_dict']
     
@@ -63,6 +86,16 @@ def cm_f1(gt_pred_df:gpd.GeoDataFrame,
 
 def record_count(df: pd.DataFrame, 
                  column: str) -> pd.DataFrame:
+    """
+    Count the occurrences of each unique value in the specified column.
+
+    Args:
+        df (pd.DataFrame): DataFrame containing the data.
+        column (str): Column name to count unique values.
+
+    Returns:
+        pd.DataFrame: DataFrame with counts of unique values.
+    """
     counts = df[column].value_counts().reset_index()
     counts.columns = [column, 'Count']
     return counts
@@ -70,6 +103,17 @@ def record_count(df: pd.DataFrame,
 def agreement(df: pd.DataFrame, 
               gt_label: str, 
               pred_label: str) -> pd.DataFrame:
+    """
+    Calculate the percentage agreement between ground truth and predicted labels.
+
+    Args:
+        df (pd.DataFrame): DataFrame containing ground truth and predicted labels.
+        gt_label (str): Column name for ground truth labels.
+        pred_label (str): Column name for predicted labels.
+
+    Returns:
+        pd.DataFrame: DataFrame with a 'Percent Agreement' column aligned to gt_label column index.
+    """
     total_counts = df[gt_label].value_counts()
     match_counts = df[df[gt_label] == df[pred_label]][gt_label].value_counts()
     
@@ -80,18 +124,35 @@ def agreement(df: pd.DataFrame,
     percent_agreement.columns = [gt_label, 'Percent Agreement']
     return percent_agreement
 
-# Average Confidence Values
 def average_confidence(df: pd.DataFrame, 
                        pred_label: str, 
                        confidence_col: str) -> pd.DataFrame:
+    """
+    Calculate the average confidence values for each unique predicted label.
+
+    Args:
+        df (pd.DataFrame): DataFrame containing predicted labels and confidence values.
+        pred_label (str): Column name for predicted labels.
+        confidence_col (str): Column name for confidence values.
+
+    Returns:
+        pd.DataFrame: DataFrame with average confidence values for each unique predicted label.
+    """
     avg_conf_df = round(df.groupby(pred_label)[confidence_col].mean(),2).reset_index()
     avg_conf_df.columns = [pred_label, 'Average Confidence']
     return avg_conf_df
 
-# Plot Confusion Matrix
 def plot_confusion_matrix(cm:np.ndarray, 
                           labels:list,
                           output_path:str):
+    """
+    Plot and save the confusion matrix.
+
+    Args:
+        cm (np.ndarray): Confusion matrix.
+        labels (list): List of labels for the confusion matrix.
+        output_path (str): Path to save the plot.
+    """
     plt.figure(figsize=(14, 14))
     sns.heatmap(cm, annot=True, fmt="d", xticklabels=labels, yticklabels=labels, cmap="Blues", annot_kws={"size": 8})
     plt.xlabel("Predicted", fontsize=14)

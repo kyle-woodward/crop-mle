@@ -18,15 +18,27 @@ log_filepath = os.path.join(log_dir, log_filename)
 logging.basicConfig(filename=log_filepath, level=logging.INFO, 
                     format='%(asctime)s - %(levelname)s - %(message)s')
 def main():
+    """
+    Main function to evaluate crop model predictions.
+
+    Example usage:
+        python main.py --gt /path/to/ground_truth.gpkg --raster /path/to/prediction_raster.tif
+    """
+    
     # Set up argument parser
-    parser = argparse.ArgumentParser(description='Crop Model Performance Analysis.')
+    parser = argparse.ArgumentParser(description='Crop Model Performance Analysis.',
+                                     epilog='Example usage: python main.py --gt /path/to/ground_truth.gpkg --raster /path/to/prediction_raster.tif',
+                                     formatter_class=argparse.RawTextHelpFormatter
+                                     )
     parser.add_argument('--gt', type=str, required=True, help='Path to the ground truth vector file')
     parser.add_argument('--raster', type=str, required=True, help='Path to the prediction raster data file')
+    parser.add_argument('--label_field', type=str, default='normalized_label', help='Field name in the ground truth data containing crop type labels')
     args = parser.parse_args()
 
     # load data, data dictionary, and conduct schema check on fields
     gt_path = args.gt
     raster_path = args.raster
+    label_field = args.label_field
     
     print(f'Starting Process...check progress at {log_filepath}')
     
@@ -40,7 +52,7 @@ def main():
 
     # load ground truth data and conduct schema check
     fields = load_gt(gt_path)  
-    fields = schema_check(fields, labels_dict)
+    fields = schema_check(fields, label_field, labels_dict)
 
     # aggregate model predictions to fields
     preds = aggregate_predictions(raster_path, fields)
@@ -51,7 +63,7 @@ def main():
     merged_df.to_csv(results_dir+'/merged_df.csv', index=False)
 
     merged_df = standardize_labels(merged_df,
-                                        "normalized_label", 
+                                        label_field, 
                                         "predicted_int",
                                         labels_dict
                                         )

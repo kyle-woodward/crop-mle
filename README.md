@@ -1,12 +1,20 @@
-# Setup
+# Crop Doctor :man_health_worker:
+[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+
+Key Features:
+* Performs crop model performance analysis
+* Identifies underperforming crop types 
+* Provides pipeline tooling for conducting simplified active learning
+
+## Setup
 
 Run the dockerfile tbd
 
-# Implementation Notes
+## Implementation Notes
 
 This tool utilizes `multiprocessing` to parallelize raster to vector field-level aggregations of model predictions and runs in about 2 minutes on my 20 core 64GB RAM machine. We also use `dataclass` as a clean way to store and load the provided (and any other future hypothetical) label dictionary. 
 
-## Some Gotcha's
+### Some Gotcha's
 At some point, I discovered that two fields in the ground truth dataset had 'normalized_label':'radish' which wasn't in provided data dictionary. So I implemented a [`schema_check`](/crop_mle/load_data.py) to check for non-conforming field values and removing those records at the outset.
 
 I also discovered through some [rasterio.mask.mask](https://rasterio.readthedocs.io/en/stable/api/rasterio.mask.html) debugging that there are about ~170 fields that are so small that the default behavior was not even grabbing one valid pixel. Those are removed from analysis by setting a nodata value for the masking and removing those nodata values before doing the field-level prediction aggregation.

@@ -58,7 +58,7 @@ def process_field(field: gpd.GeoDataFrame, raster_path: str) -> tuple:
             logging.info(f"conf: {conf}")
             majority_class, avg_conf = None, None
 
-    return field["field_id"], majority_class, avg_conf
+    return field["field_id"], majority_class, avg_conf, field.geometry
 
 
 def aggregate_predictions(raster_path: str, fields: gpd.GeoDataFrame) -> pd.DataFrame:
@@ -70,10 +70,15 @@ def aggregate_predictions(raster_path: str, fields: gpd.GeoDataFrame) -> pd.Data
         fields (gpd.GeoDataFrame): GeoDataFrame containing field geometries.
 
     Returns:
-        pd.DataFrame: DataFrame containing field_id, predicted class, and confidence.
+        gpd.GeoDataFrame: GeoDataFrame containing field_id, predicted class, and confidence.
     """
     with mp.Pool(mp.cpu_count()) as pool:
         results = pool.starmap(
             process_field, [(field, raster_path) for _, field in fields.iterrows()]
         )
-    return pd.DataFrame(results, columns=["field_id", "predicted_int", "confidence"])
+    df = pd.DataFrame(
+        results, columns=["field_id", "predicted_int", "confidence", "geom"]
+    )
+    gdf = gpd.GeoDataFrame(df, geometry="geom", crs=fields.crs)
+    gdf.drop(columns=["geom"], inplace=True)
+    return gdf

@@ -1,5 +1,5 @@
-from process import aggregate_predictions
-from evaluate import (
+from crop_mle.process import aggregate_predictions
+from crop_mle.evaluate import (
     schema_check,
     standardize_labels,
     record_count,
@@ -8,9 +8,9 @@ from evaluate import (
     cm_f1,
     plot_confusion_matrix,
 )
-from select_fields import conf_percentiles, select_records
+from crop_mle.select_fields import conf_percentiles, select_records
 from dataclasses import asdict
-from _types import CropTypeDictionary
+from crop_mle._types import CropTypeDictionary
 import pandas as pd
 import geopandas as gpd
 import time

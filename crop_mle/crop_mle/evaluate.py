@@ -5,7 +5,7 @@ import seaborn as sns
 import numpy as np
 from sklearn.metrics import confusion_matrix, f1_score
 from dataclasses import asdict
-from _types import CropTypeDictionary
+from crop_mle._types import CropTypeDictionary
 from collections import OrderedDict
 import logging
 import os

@@ -8,7 +8,23 @@ Key Features:
 
 ## Setup
 
-Run the dockerfile tbd
+1. Build Docker image from Dockerfile:
+
+`docker build -t <image-tag> .`
+
+2. Run the docker container:
+
+`docker run -v /path/to/your/data:/data -e PYTHONPATH=/app -it <image-tag> bash`
+
+3. From here you can:
+
+* run `main` in `analysis` mode to conduct performance analysis:
+
+`python crop_mle/main.py --gt /data/u0c_gt_filtered_2022.gpkg --raster /data/ml_2021-08-01_2022-12-31_u0c.tif --label_field normalized_label --mode analysis`
+
+* run `select` mode to select export underperforming fields from `u0c` using our underperformance ruleset:
+
+`python crop_mle/main.py --gt /data/u0c_gt_filtered_2022.gpkg --raster /data/ml_2021-08-01_2022-12-31_u0c.tif --label_field normalized_label --mode analysis`
 
 ## Implementation Notes
 

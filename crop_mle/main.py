@@ -8,7 +8,7 @@ from crop_mle.evaluate import (
     cm_f1,
     plot_confusion_matrix,
 )
-from crop_mle.select_fields import conf_percentiles, select_records
+from crop_mle.select_fields import select_records
 from dataclasses import asdict
 from crop_mle._types import CropTypeDictionary
 import pandas as pd
@@ -19,7 +19,7 @@ from datetime import datetime
 import argparse
 
 # Set up logging
-log_dir = os.path.join(os.path.dirname(__file__), "..", ".log")
+log_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), ".log"))
 os.makedirs(log_dir, exist_ok=True)
 log_filename = datetime.now().strftime("logfile_%Y%m%d_%H%M%S.log")
 log_filepath = os.path.join(log_dir, log_filename)

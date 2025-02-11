@@ -2,20 +2,39 @@
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
 Key Features:
-* Performs crop model performance analysis
-* Identifies underperforming crop types 
-* Provides pipeline tooling for conducting simplified active learning
 
-## Setup
+:corn: Performs crop model performance analysis
 
-Run the dockerfile tbd
+:mechanical_arm: Provides automated pipeline tooling for extracting underperforming fields
+
+## Setup & Use
+
+1. Build Docker image from Dockerfile:
+
+`docker build -t crop-mle .`
+
+2. Run the docker container:
+
+`docker run -v /path/to/your/data:/data -e PYTHONPATH=/app -it crop-mle bash`
+
+**ensure that `path/to/your/data` directory contains the two datasets that you need to download: [ml_2021-08-01_2022-12-31_u0c.tif](https://drive.google.com/file/d/1R_4NtTIUrQHo7cGA-Xi26KvUh3RYjLa3/view?usp=drive_link) and [u0c_gt_filtered_2022.gpkg](https://drive.google.com/file/d/1uOM9DlyNp4V2dNtW_cSt8VLvTRSzlGn6/view?usp=drive_link)**
+
+3. From here you can:
+
+* run in `analysis` mode to conduct performance analysis:
+
+`python crop_mle/main.py --gt /data/u0c_gt_filtered_2022.gpkg --raster /data/ml_2021-08-01_2022-12-31_u0c.tif --label_field normalized_label --mode analysis`
+
+* run in `select` mode to select export underperforming fields from `u0c` using our underperformance ruleset:
+
+`python crop_mle/main.py --gt /data/u0c_gt_filtered_2022.gpkg --raster /data/ml_2021-08-01_2022-12-31_u0c.tif --label_field normalized_label --mode analysis`
 
 ## Implementation Notes
 
-This tool utilizes `multiprocessing` to parallelize raster to vector field-level aggregations of model predictions and runs in about 2 minutes on my 20 core 64GB RAM machine. We also use `dataclass` as a clean way to store and load the provided (and any other future hypothetical) label dictionary. 
+This tool utilizes `multiprocessing` and vectorized `pandas` operations for efficient raster to vector field-level aggregations and analysis of large tabular datasets. We also use `dataclass` as a clean way to store and load the provided (and any other future hypothetical) label dictionary. As a qualitative efficiency benchmark, a machine with 20 cores & 64GB RAM runs both processing tools in under 2 minutes each for the ~150k record fields dataset.
 
 ### Some Gotcha's
-At some point, I discovered that two fields in the ground truth dataset had 'normalized_label':'radish' which wasn't in provided data dictionary. So I implemented a [`schema_check`](/crop_mle/load_data.py) to check for non-conforming field values and removing those records at the outset.
+To ensure crop types are At some point, I discovered that two fields in the ground truth dataset had 'normalized_label':'radish' which wasn't in provided data dictionary. So I implemented a [`schema_check`](/crop_mle/load_data.py) to check for non-conforming field values and removing those records at the outset.
 
 I also discovered through some [rasterio.mask.mask](https://rasterio.readthedocs.io/en/stable/api/rasterio.mask.html) debugging that there are about ~170 fields that are so small that the default behavior was not even grabbing one valid pixel. Those are removed from analysis by setting a nodata value for the masking and removing those nodata values before doing the field-level prediction aggregation.
 

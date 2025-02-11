@@ -126,13 +126,11 @@ In this list there are three crop types where 0.5 > F1 < 0.75: Flax, Peas, and F
 | Peas           | 0.74 | 57.01              | 2112  | 86.84             |
 | Flax           | 0.75 | 53.58              | 4123  | 60.42             |
 
-| Total Count    | 35,959 |
-
 This represents 23.3% (35,959) of the total ground truth dataset and deciding factors were a combination of F1, Agreement %, and Average Confidence.
 
 ## Prognosis :clipboard:
 
-While it may be easier to filter this ground truth dataset by crop type using this list (and we could), it may be more helpful to be discerning at the individual field-level to compose a new training dataset out of the `u0c` AOI ground truth. By constructing a simple ruleset that defines whether or not to keep a field, we can filter the ground truth dataset to individual fields where the model underperforms rather than taking them all for a given crop type. It is most productive to re-train the model on fields where it was both:
+While it may be easier to filter this ground truth dataset by crop type using this list (and we could), it may be more helpful to be discerning at the individual field-level to compose a new training dataset out of the `u0c` AOI ground truth. By constructing a simple ruleset that defines whether or not to keep a field, we can filter the ground truth dataset to individual fields where the model underperforms rather than taking them all for a given crop type. It is most productive to re-train the model on fields where it was either:
 
 1. Incorrect
 2. Correct, but uncertain
